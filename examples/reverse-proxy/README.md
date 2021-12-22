@@ -17,3 +17,6 @@
   # should be run from within this directory
   docker-compose up apps-proxy
   ```
+- You can then navigate to:
+  - http://app1.loc
+  - http://app2.loc
