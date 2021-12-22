@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  app1:
+    container_name: app1
+    image: nginx:stable
+    volumes:
+      - "${PWD}/app_1.html:/usr/share/nginx/html/index.html"
+  
+  app2:
+    container_name: app2
+    image: nginx:stable
+    volumes:
+      - "${PWD}/app_2.html:/usr/share/nginx/html/index.html"
+  
+  apps-proxy:
+    container_name: apps-proxy
+    depends_on:
+      - app1
+      - app2
+    image: nginx:stable
+    links:
+      - app1:app1.loc
+      - app2:app2.loc
+    ports:
+      - 80:80
+    volumes:
+      - "${PWD}/default.conf:/etc/nginx/conf.d/default.conf"
