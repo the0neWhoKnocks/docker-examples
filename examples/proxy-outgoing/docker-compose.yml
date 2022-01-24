@@ -1,0 +1,34 @@
+version: "2"
+
+services:
+  app:
+    build:
+      context: ./app
+    command: node /home/node/index.js
+    environment:
+      API_URL1: "http://api.icndb.com/jokes/random"
+      API_URL2: "https://rickandmortyapi.com/api/character/<ID>"
+      HOST_PORT: 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - "${PWD}/app/server.js:/home/node/index.js"
+    
+  proxy:
+    build:
+      context: ./proxy
+    command: node /home/node/proxy/server.js
+    ports:
+      - 3001:3000
+    volumes:
+      - "${PWD}/proxy:/home/node/proxy"
+
+  proxy-router:
+    image: ncarlier/redsocks
+    command: localhost 3001
+    environment:
+      DOCKER_NET: ""
+    network_mode: host
+    privileged: true
+    volumes:
+      - "${PWD}/proxy/whitelist.txt:/etc/redsocks-whitelist.txt"
