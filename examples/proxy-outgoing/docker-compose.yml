@@ -18,8 +18,12 @@ services:
     build:
       context: ./proxy
     command: node /home/node/proxy/server.js
+    environment:
+      PORT__PROXY: 3001
+      PORT__SERVER: 3002
     ports:
-      - 3001:3000
+      - 3001:3001
+      - 3002:3002
     volumes:
       - "${PWD}/proxy:/home/node/proxy"
 
