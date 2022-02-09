@@ -25,10 +25,11 @@ services:
 
   proxy-router:
     image: ncarlier/redsocks
-    command: localhost 3001
+    command: 0.0.0.0 3001 # these define `proxy_ip` and `proxy_port` which is used by `redsocks.sh` in the image
     environment:
       DOCKER_NET: ""
     network_mode: host
     privileged: true
     volumes:
+      # - "${PWD}/proxy/redsocks.tmpl:/etc/redsocks.tmpl"
       - "${PWD}/proxy/whitelist.txt:/etc/redsocks-whitelist.txt"
