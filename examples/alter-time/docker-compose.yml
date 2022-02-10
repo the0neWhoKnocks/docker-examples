@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: ./app
+    command: node /home/node/index.js
+    environment:
+      HOST_PORT: 3000
+      TZ: America/Los_Angeles
+      # mock time stuff
+      DONT_FAKE_MONOTONIC: 1 # LD_PRELOAD freezes without this
+      FAKETIME: "2021-12-20 20:30:00"
+      FAKETIME_NO_CACHE: 1 
+      LD_PRELOAD: /usr/local/lib/faketime/libfaketime.so.1
+    ports:
+      - 3000:3000
+    volumes:
+      - "${PWD}/app/server.js:/home/node/index.js"
