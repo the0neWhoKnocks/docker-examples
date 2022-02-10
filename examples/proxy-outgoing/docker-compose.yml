@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 
 services:
   app:
@@ -13,22 +13,36 @@ services:
       - 3000:3000
     volumes:
       - "${PWD}/app/server.js:/home/node/index.js"
-    
+  
+  proxied-app:
+    extends: app
+    depends_on:
+      - proxy
+    environment:
+      NODE_EXTRA_CA_CERTS: /home/node/certs/localhost-CA.crt
+      NODE_TLS_REJECT_UNAUTHORIZED: 0 # Using this to get around error "reason: Hostname/IP does not match certificate's altnames: Host: <HOST>. is not in the cert's altnames: DNS:localhost
+    networks:
+      - outgoing
+    volumes:
+      - "${PWD}/certs:/home/node/certs"
+  
   proxy:
     build:
       context: ./proxy
     command: node /home/node/proxy/server.js
-    ports:
-      - 3001:3000
+    environment:
+      CRT: /home/node/certs/localhost.crt
+      KEY: /home/node/certs/localhost.key
+      NODE_EXTRA_CA_CERTS: /home/node/certs/localhost-CA.crt
+    networks:
+      outgoing:
+        aliases: # alias this Server by these domains
+          - api.icndb.com
+          - rickandmortyapi.com
     volumes:
+      - "${PWD}/certs:/home/node/certs"
       - "${PWD}/proxy:/home/node/proxy"
 
-  proxy-router:
-    image: ncarlier/redsocks
-    command: localhost 3001
-    environment:
-      DOCKER_NET: ""
-    network_mode: host
-    privileged: true
-    volumes:
-      - "${PWD}/proxy/whitelist.txt:/etc/redsocks-whitelist.txt"
+networks:
+  outgoing:
+    driver: bridge
