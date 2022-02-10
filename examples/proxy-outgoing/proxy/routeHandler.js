@@ -1,8 +1,15 @@
 module.exports = function routeHandler(req, res) {
-  const url = req.originalUrl;
+  const domain = req.headers.host;
+  const url = `${!!req.socket.ssl ? 'https' : 'http'}://${domain}${req.originalUrl}`;
   
   console.log(`[PROXY] Request for: "${url}"`);
   
-  if (url.endsWith('favicon.ico')) res.send('');
-  else res.json({ fu: 'bar' });
+  if (
+    domain === 'api.icndb.com'
+    || domain === 'rickandmortyapi.com'
+  ) {
+    return res.json({ mock: `for "${url}"` });
+  }
+  
+  res.send('');
 }

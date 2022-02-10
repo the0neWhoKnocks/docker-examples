@@ -2,6 +2,8 @@
 
 There may be cases (testing, API development) when your App will make external requests but you want to serve up mock/static data.
 
+For the time being you have to manually add the domains you want to proxy to the `networks.outgoing.aliases` section of `docker-compose.yml` in the `proxy` Service.
+
 ---
 
 ## Run
@@ -14,18 +16,10 @@ docker-compose up app
 
 ### Run the App with the Proxy
 
-**Note**: To ensure Firewall rules don't get messed up, you can back up and restore settings via:
 ```sh
-# backup
-sudo iptables-save > ./iptables.bak
-# restore
-sudo iptables-restore < ./iptables.bak 
-```
+# Start Proxy in background (no logs)
+docker-compose up proxied-app
 
-**Note**: For now it only proxies `http` requests, `https` requests result in a failure to connect.
-
-A shell script is required right now to ensure the `iptables` rules are reset every time (in case docker-compose doesn't exit consistently).
-
-```sh
-./start.sh
+# If you want to see the logs for the Proxy
+docker-compose up proxy proxied-app
 ```
