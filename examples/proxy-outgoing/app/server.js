@@ -1,10 +1,12 @@
 const express = require('express');
 const { teenyRequest } = require('teeny-request');
 
-const request = (url) => new Promise((resolve, reject) => {
-  console.log(`Request data from: "${url}"`);
+const request = (url, data) => new Promise((resolve, reject) => {
+  const method = data ? 'POST' : 'GET';
   
-  teenyRequest({ uri: url }, (err, resp, body) => {
+  console.log(`[${method}] data ${method === 'GET' ? 'from' : 'to'}: "${url}"`);
+  
+  teenyRequest({ json: data, method, uri: url }, (err, resp, body) => {
     if (err) reject(err);
     else resolve(body);
   });
@@ -13,28 +15,43 @@ const request = (url) => new Promise((resolve, reject) => {
 const randomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
 const app = express();
-
-const apis = [
-  process.env.API_URL1,
-  process.env.API_URL2,
-];
 let apiNdx = 0;
 
 app.use('/', async (req, res) => {
   if (req.originalUrl.endsWith('favicon.ico')) return res.send('');
   
-  let apiURL = apis[apiNdx];
-  let data;
-  
-  if (apiNdx) apiURL = apiURL.replace('<ID>', randomNumber(1, 20));
-  apiNdx = !apiNdx ? 1 : 0;
+  let apiURL;
+  let payload;
+  let resp;
   
   try {
-    data = JSON.stringify(await request(apiURL), null, 2);
-    console.log(data);
+    switch (apiNdx) {
+      case 0: {
+        apiURL = 'http://api.icndb.com/jokes/random';
+        break;
+      }
+      case 1: {
+        apiURL = `https://rickandmortyapi.com/api/character/${randomNumber(1, 20)}`;
+        break;
+      }
+      case 2: {
+        apiURL = 'https://jsonplaceholder.typicode.com/posts';
+        payload = {
+          title: 'fu',
+          body: 'bar',
+          userId: randomNumber(1000, 2000),
+        };
+        break;
+      }
+    }
+    
+    apiNdx = (apiNdx === 2) ? 0 : apiNdx + 1;
+      
+    resp = JSON.stringify(await request(apiURL, payload), null, 2);
+    console.log(resp);
   }
   catch (err) {
-    data = err.stack;
+    resp = err.stack;
     console.error(err);
   }
   
@@ -76,7 +93,7 @@ app.use('/', async (req, res) => {
       <body>
         <div>
           <h3>Response for <a href="${apiURL}">${apiURL}</a></h3>
-          <pre>${data}</pre>
+          <pre>${resp}</pre>
         </div>
       </body>
     </html>
