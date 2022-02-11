@@ -6,8 +6,6 @@ services:
       context: ./app
     command: node /home/node/index.js
     environment:
-      API_URL1: "http://api.icndb.com/jokes/random"
-      API_URL2: "https://rickandmortyapi.com/api/character/<ID>"
       HOST_PORT: 3000
     ports:
       - 3000:3000
@@ -30,6 +28,7 @@ services:
     build:
       context: ./proxy
     command: node /home/node/proxy/server.js
+    command: node --inspect=0.0.0.0:9229 /home/node/proxy/server.js
     environment:
       CRT: /home/node/certs/localhost.crt
       KEY: /home/node/certs/localhost.key
@@ -38,7 +37,10 @@ services:
       outgoing:
         aliases: # alias this Server by these domains
           - api.icndb.com
+          - jsonplaceholder.typicode.com
           - rickandmortyapi.com
+    ports:
+      - 9229:9229
     volumes:
       - "${PWD}/certs:/home/node/certs"
       - "${PWD}/proxy:/home/node/proxy"
