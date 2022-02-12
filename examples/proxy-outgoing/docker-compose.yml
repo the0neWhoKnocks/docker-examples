@@ -27,7 +27,6 @@ services:
   proxy:
     build:
       context: ./proxy
-    command: node /home/node/proxy/server.js
     command: node --inspect=0.0.0.0:9229 /home/node/proxy/server.js
     environment:
       CRT: /home/node/certs/localhost.crt
