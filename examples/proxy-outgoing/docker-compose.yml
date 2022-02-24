@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: ./app
-    command: node /home/node/index.js
+    command: node --no-warnings /home/node/index.js
     environment:
       HOST_PORT: 3000
     ports:
@@ -19,31 +19,31 @@ services:
     environment:
       NODE_EXTRA_CA_CERTS: /home/node/certs/localhost-CA.crt
       NODE_TLS_REJECT_UNAUTHORIZED: 0 # Using this to get around error "reason: Hostname/IP does not match certificate's altnames: Host: <HOST>. is not in the cert's altnames: DNS:localhost
-    networks:
-      - outgoing
+    links:
+      # NOTE: Just add any domains that you want to go through the Proxy
+      # container below. Prefixed with the Container's name 'proxy:'.
+      - "proxy:api.icndb.com"
+      - "proxy:jsonplaceholder.typicode.com"
+      - "proxy:rickandmortyapi.com"
     volumes:
       - "${PWD}/certs:/home/node/certs"
   
   proxy:
     build:
       context: ./proxy
-    command: node --inspect=0.0.0.0:9229 /home/node/proxy/server.js
     environment:
       CRT: /home/node/certs/localhost.crt
       KEY: /home/node/certs/localhost.key
       NODE_EXTRA_CA_CERTS: /home/node/certs/localhost-CA.crt
-    networks:
-      outgoing:
-        aliases: # alias this Server by these domains
-          - api.icndb.com
-          - jsonplaceholder.typicode.com
-          - rickandmortyapi.com
     ports:
       - 9229:9229
     volumes:
       - "${PWD}/certs:/home/node/certs"
-      - "${PWD}/proxy:/home/node/proxy"
-
-networks:
-  outgoing:
-    driver: bridge
+      - "${PWD}/proxy/cache:/home/node/proxy/cache"
+      - "${PWD}/proxy/matcher.js:/home/node/proxy/matcher.js"
+      # NOTE: Uncomment the below items for local dev
+      # - "${PWD}/proxy/src/cacheResponse.js:/home/node/proxy/cacheResponse.js"
+      # - "${PWD}/proxy/src/requireCurrent.js:/home/node/proxy/requireCurrent.js"
+      # - "${PWD}/proxy/src/routeHandler.js:/home/node/proxy/routeHandler.js"
+      # - "${PWD}/proxy/src/server.js:/home/node/proxy/server.js"
+      # - "${PWD}/proxy/src/shared.js:/home/node/proxy/shared.js"
