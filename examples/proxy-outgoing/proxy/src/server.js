@@ -3,7 +3,8 @@ const http = require('http');
 const https = require('https');
 const bodyParser = require('body-parser');
 const express = require('express');
-const requireCurrent = require('./requireCurrent');
+const routeHandler = require('./routeHandler');
+const { color } = require('./shared');
 
 const app = express();
 
@@ -12,11 +13,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 // handle requests
-app.use('*', (...args) => requireCurrent('./routeHandler')(...args));
+app.use('*', routeHandler);
 
 function portHandler(port) {
   return [port, () => {
-    console.log(`Proxy running on Container port: ${port}`);
+    console.log(`${color.block.good('RUN')} Proxy on Container port: ${color.text.info(port)}`);
   }];
 }
 

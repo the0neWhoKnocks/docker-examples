@@ -1,5 +1,13 @@
 FROM node:14-alpine
 
-RUN mkdir -p /home/node/node_modules && chown -R node:node /home/node/*
+USER node
+
 WORKDIR /home/node
-RUN npm i --unsafe-perm body-parser express
+RUN mkdir -p proxy/cache
+
+WORKDIR /home/node/proxy
+RUN npm i --loglevel=error body-parser cli-color express hash-sum teeny-request
+
+COPY ./src/* ./
+
+CMD ["node", "--inspect=0.0.0.0:9229", "./server.js"]
