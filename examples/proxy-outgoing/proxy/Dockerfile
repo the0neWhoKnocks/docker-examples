@@ -6,7 +6,7 @@ WORKDIR /home/node
 RUN mkdir -p proxy/cache
 
 WORKDIR /home/node/proxy
-RUN npm i --loglevel=error body-parser cli-color express hash-sum teeny-request
+RUN npm i --loglevel=error body-parser cli-color express hash-sum mkdirp teeny-request
 
 COPY ./src/* ./
 

@@ -1,6 +1,7 @@
 const { promises: { readFile, writeFile } } = require('fs');
 const { resolve: resolvePath } = require('path');
 const hash = require('hash-sum');
+const mkdirp = require('mkdirp');
 const { teenyRequest } = require('teeny-request');
 const { color, formatReqData } = require('./shared');
 
@@ -24,13 +25,21 @@ const request = (req) => new Promise((resolve, reject) => {
   });
 });
 
-module.exports = async function cacheResponse(req, { label } = {}) {
+module.exports = async function cacheResponse(req, {
+  label,
+  prefixLabel = true,
+  subDir = '',
+} = {}) {
   let cachedFile;
   
   try {
     const { domain, fullURL, method, pathAndParams } = formatReqData(req);
     const formattedLabel = formatLabel(label, pathAndParams);
-    const cachedFilePath = `${CACHE_PATH}/[${method}]_[${domain}]__${formattedLabel}.json`;
+    const basePath = `${CACHE_PATH}${subDir ? `/${subDir}` : ''}`;
+    const labelPrefix = prefixLabel ? `[${method}]_[${domain}]__` : '';
+    const cachedFilePath = `${basePath}/${labelPrefix}${formattedLabel}.json`;
+    
+    if (subDir) await mkdirp(basePath);
     
     try {
       cachedFile = JSON.parse(await readFile(cachedFilePath, 'utf8'));

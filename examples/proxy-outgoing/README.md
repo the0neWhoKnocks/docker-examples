@@ -32,6 +32,17 @@ docker-compose logs -f
 
 ---
 
+## Cache data
+
+`cacheResp` options
+| Prop | Type | Description |
+| ---- | ---- | ----------- |
+| `label` | `String` | A label for the saved file. If not set, a hash will be generated from the URL. |
+| `prefixLabel` | `Boolean` | Whether or not to prefix the label with the request method and domain. |
+| `subDir` | `String` | A path to a sub directory where the file will be saved. In the format `folder/folder/folder`, it should not start or end with a slash. |
+
+---
+
 ## Publish
 
 This image is pretty useful, so if you want to edit and publish your own version run:
