@@ -51,5 +51,6 @@ docker tag <LOCAL_IMAGE_NAME>:<TAG> <DOCKERHUB_USER>/<IMAGE_NAME>:<TAG> && docke
 
 # example of my own publish
 docker login # enter creds
+docker-compose build proxy # ensure image is built
 docker tag proxy-outgoing_proxy:latest theonewhoknocks/nodejs-proxy:latest && docker push theonewhoknocks/nodejs-proxy:latest
 ```

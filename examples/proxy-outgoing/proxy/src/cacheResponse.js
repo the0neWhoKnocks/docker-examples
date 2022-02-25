@@ -21,6 +21,14 @@ const request = (req) => new Promise((resolve, reject) => {
   
   teenyRequest(payload, (err, resp, body) => {
     if (err) return reject(err);
+    
+    if (
+      typeof body === 'string'
+      && resp?.headers?.['content-type']?.includes('application/json')
+    ) {
+      body = JSON.parse(body);
+    }
+    
     resolve(body);
   });
 });
