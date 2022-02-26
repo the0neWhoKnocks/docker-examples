@@ -7,6 +7,7 @@ module.exports = {
       comment: str => cc.bold.whiteBright.inverse(` ${str} `),
       good: str => cc.bold.greenBright.inverse(` ${str} `),
       info: str => cc.bold.cyanBright.inverse(` ${str} `),
+      warn: str => cc.bold.yellowBright.inverse(` ${str} `),
     },
     text: {
       bad: cc.redBright,
