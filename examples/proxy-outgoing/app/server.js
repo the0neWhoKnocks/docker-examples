@@ -1,3 +1,5 @@
+const { promises: { readFile } } = require('fs');
+const { resolve: resolvePath } = require('path');
 const express = require('express');
 const { teenyRequest } = require('teeny-request');
 
@@ -49,55 +51,25 @@ app.use('/', async (req, res) => {
       
     resp = JSON.stringify(await request(apiURL, payload), null, 2);
     console.log(resp);
+    
+    // this is just for live updates for the example
+    const template = await readFile(resolvePath(__dirname, './index.html'), { encoding: 'utf8' });
+    const model = { apiURL, resp };
+    const render = (str, data) => {
+      let ret = str;
+      Object.keys(data).forEach(key => {
+        ret = ret.replace(new RegExp(`{{${key}}}`, 'g'), data[key]);
+      });
+      return ret;
+    };
+    resp = render(template, model);
   }
   catch (err) {
     resp = err.stack;
     console.error(err);
   }
   
-  res.send(`
-    <html>
-      <head>
-        <title>App</title>
-        <style>
-          body {
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          
-          h3, pre {
-            margin: 0;
-          }
-          
-          div {
-            width: 75vw;
-            max-height: 75vw;
-            padding: 1em;
-            border: solid 1px;
-            display: flex;
-            flex-direction: column;
-            gap: 1em;
-          }
-          
-          pre {
-            color: #eee;
-            overflow: auto;
-            padding: 1em;
-            background: #333;
-          }
-        </style>
-      </head>
-      <body>
-        <div>
-          <h3>Response for <a href="${apiURL}">${apiURL}</a></h3>
-          <pre>${resp}</pre>
-        </div>
-      </body>
-    </html>
-  `);
+  res.send(resp);
 });
 
 app.listen(process.env.HOST_PORT, () => {

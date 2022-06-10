@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <title>App</title>
+    <style>
+      body {
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      h3, pre {
+        margin: 0;
+      }
+      
+      p {
+        margin: 0 0 0.75em;
+      }
+      
+      div {
+        width: 75vw;
+        max-height: 75vw;
+        padding: 1em;
+        border: solid 1px;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+      }
+      
+      code,
+      pre {
+        color: #eee;
+        background: #333;
+      }
+      pre {
+        overflow: auto;
+        padding: 1em;
+      }
+      code {
+        padding: 0.25em;
+        border-radius: 0.25em;
+        display: inline-block;
+      }
+      
+      button:not(:disabled) {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <p>
+      Reload page to see responses for different requests.
+    </p>
+    <p>
+      State: <code id="stateData"></code>
+      <button type="button" id="updateState">Update State</button>
+    </p>
+    <div>
+      <h3>Response for <a href="{{apiURL}}">{{apiURL}}</a></h3>
+      <pre>{{resp}}</pre>
+    </div>
+    <script>
+      const ENDPOINT__STATE = 'http://localhost:3001/state';
+      const dataEl = document.getElementById('stateData');
+      const stateBtn = document.getElementById('updateState');
+      let state;
+      
+      async function init() {
+        state = await fetch(ENDPOINT__STATE).then(resp => resp.json());
+        dataEl.textContent = JSON.stringify(state);
+      }
+      
+      async function changeState() {
+        const newState = state.enabled ? {} : { enabled: true };
+        state = await fetch(ENDPOINT__STATE, {
+          body: JSON.stringify(newState),
+          headers: { 'content-type': 'application/json' },
+          method: 'PUT',
+        }).then(resp => resp.json());
+        dataEl.textContent = JSON.stringify(state);
+      }
+      
+      stateBtn.addEventListener('click', changeState);
+      
+      init();
+    </script>
+  </body>
+</html>
