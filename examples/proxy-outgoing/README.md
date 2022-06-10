@@ -8,6 +8,13 @@ For the time being you have to manually add the domains you want to proxy to the
 - The `res` Object is from ExpressJS so you can serve data using any of it's functions.
 - If you want to cache and then serve actual data from an endpoint you can use the `cacheResp` function. `cacheResp` allows for labeling a cached file so it's easier to understand what file's being served - or if you need to delete it later to cache a new payload.
 
+- [Run](#run)
+  - [App without the Proxy](#app-without-the-proxy)
+  - [Run the App with the Proxy](#run-the-app-with-the-proxy)
+  - [Cache data](#cache-data)
+  - [State](#state)
+- [Publish](#publish)
+
 ---
 
 ## Run
@@ -30,9 +37,7 @@ docker-compose up proxy proxied-app
 docker-compose logs -f
 ```
 
----
-
-## Cache data
+### Cache data
 
 `cacheResp` options
 | Prop | Type | Description |
@@ -40,6 +45,23 @@ docker-compose logs -f
 | `label` | `String` | A label for the saved file. If not set, a hash will be generated from the URL. |
 | `prefixLabel` | `Boolean` | Whether or not to prefix the label with the request method and domain. |
 | `subDir` | `String` | A path to a sub directory where the file will be saved. In the format `folder/folder/folder`, it should not start or end with a slash. |
+
+### State
+
+State can be useful if you want to serve up different proxied data at different times for the same endpoint.
+
+State will be available to the `matcher` via `req.state`. You can either `GET` or `PUT` JSON data. An example of both is:
+```js
+// get state
+const state = await fetch('http://localhost:<PROXY_PORT>/state').then(resp => resp.json());
+
+// set state
+const state = await fetch('http://localhost:<PROXY_PORT>/state', {
+  body: JSON.stringify({ fu: 'bar' }),
+  headers: { 'content-type': 'application/json' },
+  method: 'PUT',
+}).then(resp => resp.json());
+```
 
 ---
 

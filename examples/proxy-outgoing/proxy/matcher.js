@@ -1,5 +1,5 @@
 module.exports = async function matcher({ cacheResp, req, res }) {
-  const { body, domain, method } = req;
+  const { body, domain, method, state } = req;
   
   if (
     domain === 'api.icndb.com'
@@ -14,6 +14,7 @@ module.exports = async function matcher({ cacheResp, req, res }) {
       method,
       ...extraData,
       proxiedData: await cacheResp(req, { label: 'Test' }),
+      state,
     });
   }
 }

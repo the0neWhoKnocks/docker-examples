@@ -4,15 +4,18 @@ services:
   app:
     build:
       context: ./app
-    command: node --no-warnings /home/node/index.js
+    command: node --no-warnings --inspect=0.0.0.0:9229 /home/node/app/server.js
+    container_name: ex_app
     environment:
       HOST_PORT: 3000
     ports:
       - 3000:3000
+      - 9229:9229
     volumes:
-      - "${PWD}/app/server.js:/home/node/index.js"
+      - "${PWD}/app:/home/node/app"
   
   proxied-app:
+    container_name: ex_proxied_app
     extends: app
     depends_on:
       - proxy
@@ -31,12 +34,14 @@ services:
   proxy:
     build:
       context: ./proxy
+    container_name: ex_proxy
     environment:
       CRT: /home/node/certs/localhost.crt
       KEY: /home/node/certs/localhost.key
       NODE_EXTRA_CA_CERTS: /home/node/certs/localhost-CA.crt
     ports:
-      - 9229:9229
+      - 3001:80
+      - 9230:9229
     volumes:
       - "${PWD}/certs:/home/node/certs"
       - "${PWD}/proxy/cache:/home/node/proxy/cache"
