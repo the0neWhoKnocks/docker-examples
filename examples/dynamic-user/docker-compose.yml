@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: ./
+    # # using double dollars `$$` to escape docker compose' substitution
+    command: /bin/zsh -c 'rm -f "$${PATH__DATA}/ids.log" && echo "$$(id -u node):$$(id -g node)" > "$${PATH__DATA}/ids.log" && chmod 777 "$${PATH__DATA}/ids.log"'
+    # command: tail -F /dev/null
+    environment:
+      # defaults
+      TZ: America/Los_Angeles
+      # custom
+      CUSTOM_UID: 10000 # using ids that fall far outside standardly used ids
+      CUSTOM_GID: 10000
+      PATH__DATA: "/example/data"
+      PATH__SHELL_STUFF: "/example/shell-stuff"
+    volumes:
+      # NOTE: The location of mounted volumes is very important to ensure you
+      # don't experience permissions of folders/files being altered after the
+      # `usermod` command is run. For more info, refer to the blurb from the
+      # `man` page:
+      # 
+      # |----
+      # | The user's mailbox, and any files which the user owns and which are
+      # | located in the user's home directory will have the file user ID changed
+      # | automatically.
+      # |
+      # | The ownership of files outside of the user's home directory must be 
+      # | fixed manually.
+      # |
+      # | The change of the user ownership of files inside of the user's home 
+      # | directory is also not done if the home dir owner uid is different from 
+      # | the current or new user id. This is a safety measure for special home 
+      # | directories such as /.
+      # |----
+      #
+      - type: bind
+        source: "${PWD}/data"
+        target: "/example/data"
+      - type: bind
+        source: "${PWD}/shell-stuff"
+        target: "/example/shell-stuff"
