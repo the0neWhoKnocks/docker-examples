@@ -13,7 +13,7 @@ const formatLabel = (label, fallbackStr) => {
     : hash(fallbackStr)
 };
 
-const request = (req) => new Promise((resolve, reject) => {
+const request = (req, transform) => new Promise((resolve, reject) => {
   const { body: reqBody, fullURL, headers, method, pathAndParams } = formatReqData(req);
   const payload = { uri: fullURL, method };
   
@@ -22,14 +22,17 @@ const request = (req) => new Promise((resolve, reject) => {
   teenyRequest(payload, (err, resp, body) => {
     if (err) return reject(err);
     
-    if (
-      typeof body === 'string'
-      && resp?.headers?.['content-type']?.includes('application/json')
-    ) {
-      body = JSON.parse(body);
+    if (transform) resolve( transform(resp, body) );
+    else {
+      if (
+        typeof body === 'string'
+        && resp?.headers?.['content-type']?.includes('application/json')
+      ) {
+        body = JSON.parse(body);
+      }
+      
+      resolve(body);
     }
-    
-    resolve(body);
   });
 });
 
@@ -37,6 +40,7 @@ module.exports = async function cacheResponse(req, {
   label,
   prefixLabel = true,
   subDir = '',
+  transform,
 } = {}) {
   let cachedFile;
   
@@ -58,7 +62,7 @@ module.exports = async function cacheResponse(req, {
     if (!cachedFile) {
       try {
         console.log(`${color.block.info('CACHE')} Data from ${color.text.info(fullURL)}`);
-        cachedFile = await request(req);
+        cachedFile = await request(req, transform);
         await writeFile(cachedFilePath, JSON.stringify(cachedFile, null, 2), 'utf8');
         console.log(`${color.block.good('SERVE')} Cache for ${color.text.info(cachedFilePath)}`);
       }

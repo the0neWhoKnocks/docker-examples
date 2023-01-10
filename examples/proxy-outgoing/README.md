@@ -45,6 +45,7 @@ docker-compose logs -f
 | `label` | `String` | A label for the saved file. If not set, a hash will be generated from the URL. |
 | `prefixLabel` | `Boolean` | Whether or not to prefix the label with the request method and domain. |
 | `subDir` | `String` | A path to a sub directory where the file will be saved. In the format `folder/folder/folder`, it should not start or end with a slash. |
+| `transform` | `Function` | Will be called instead of the usual response parser. It exposes two arguments, one for the `response` Object, and the other is the `body`. Perform what ever logic you need to on the provided data, and return a serializable Object or a String. |
 
 ### State
 
@@ -74,5 +75,5 @@ docker tag <LOCAL_IMAGE_NAME>:<TAG> <DOCKERHUB_USER>/<IMAGE_NAME>:<TAG> && docke
 # example of my own publish
 docker login # enter creds
 docker-compose build proxy # ensure image is built
-docker tag proxy-outgoing_proxy:latest theonewhoknocks/nodejs-proxy:latest && docker push theonewhoknocks/nodejs-proxy:latest
+docker tag proxy-outgoing-proxy:latest theonewhoknocks/nodejs-proxy:latest && docker push theonewhoknocks/nodejs-proxy:latest
 ```
