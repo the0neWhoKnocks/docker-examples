@@ -22,19 +22,19 @@ For the time being you have to manually add the domains you want to proxy to the
 ### App without the Proxy
 
 ```sh
-docker-compose up app
+docker compose up app
 ```
 
 ### Run the App with the Proxy
 
 ```sh
 # Start Proxy in background (no logs)
-docker-compose up proxied-app
+docker compose up proxied-app
 
 # If you want to see the logs for the Proxy
-docker-compose up proxy proxied-app
+docker compose up proxy proxied-app
 # or
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### Cache data
@@ -74,6 +74,6 @@ docker tag <LOCAL_IMAGE_NAME>:<TAG> <DOCKERHUB_USER>/<IMAGE_NAME>:<TAG> && docke
 
 # example of my own publish
 docker login # enter creds
-docker-compose build proxy # ensure image is built
+docker compose build proxy # ensure image is built
 docker tag proxy-outgoing-proxy:latest theonewhoknocks/nodejs-proxy:latest && docker push theonewhoknocks/nodejs-proxy:latest
 ```
