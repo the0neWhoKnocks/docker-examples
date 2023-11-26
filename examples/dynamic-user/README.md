@@ -14,7 +14,7 @@ touch ./shell-stuff/.zsh_history && chmod 777 ./shell-stuff/.zsh_history
 
 This will run the basic example which changes the `node` UID and GID. It'll also create a file in `data` to demonstrate what permissions are applied.
 ```sh
-docker-compose up
+docker compose up
 ```
 
 If you want to mess around inside the Container, change this in the compose file:
@@ -27,7 +27,7 @@ If you want to mess around inside the Container, change this in the compose file
 Then run:
 ```sh
 # in shell #1
-docker-compose up
+docker compose up
 
 # in shell #2
 dc exec -u node app zsh

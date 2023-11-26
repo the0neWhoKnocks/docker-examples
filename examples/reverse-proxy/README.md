@@ -15,7 +15,7 @@
 - Start the servers
   ```sh
   # should be run from within this directory
-  docker-compose up apps-proxy
+  docker compose up apps-proxy
   ```
 - You can then navigate to:
   - http://app1.loc

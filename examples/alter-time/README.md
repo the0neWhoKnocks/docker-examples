@@ -7,5 +7,5 @@ There may be cases (like for testing) when you want to lock in a specific date o
 ## Run
 
 ```sh
-docker-compose up
+docker compose up
 ```
