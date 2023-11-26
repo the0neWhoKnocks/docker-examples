@@ -1,0 +1,20 @@
+services:
+  gencerts:
+    build:
+      dockerfile: Dockerfile
+    container_name: gencerts
+    environment:
+      CERT__DOMAIN: "homelab.net"
+      CERT__FILENAME: "homelab"
+      CERT__IP: "192.168.0.5"
+    image: theonewhoknocks/gencerts
+    network_mode: none
+    user: "$UID:$GID"
+    volumes:
+      - type: bind
+        source: "${PWD}/output"
+        target: "/opt/rootca/output"
+      # below is to allow for unknown users (in case uid:gid isn't known within the Container)
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
+
