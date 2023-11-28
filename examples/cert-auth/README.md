@@ -53,6 +53,9 @@ docker run --rm -it \
 #   DNS:homelab.net, DNS:*.homelab.net, IP Address:192.168.0.5
 #
 # So the cert covers the root domain, wild-card sub-domains, and the host IP.
+
+# Note: You can replace CERT__IP with `-e CERT__IP_RANGE="192.168.0.5-8"` to get:
+#   DNS:homelab.net, DNS:*.homelab.net, IP Address:192.168.0.5, IP Address:192.168.0.6, IP Address:192.168.0.7, IP Address:192.168.0.8
 ```
 
 You could wrap the above in a shell function for reusability:
@@ -64,6 +67,11 @@ function genCerts {
     return 1
   fi
   
+  local ip="CERT__IP=$3"
+  if echo "$3" | grep -q "-"; then
+    ip="CERT__IP_RANGE=$3"
+  fi
+  
   local outputPath="$PWD/certs"
   mkdir -p "$outputPath"
   docker run --rm -it \
@@ -73,7 +81,7 @@ function genCerts {
     --user $UID:$GID \
     -e CERT__DOMAIN="$1" \
     -e CERT__FILENAME="$2" \
-    -e CERT__IP="$3" \
+    -e $ip \
     theonewhoknocks/gencerts:latest
 }
 ```
