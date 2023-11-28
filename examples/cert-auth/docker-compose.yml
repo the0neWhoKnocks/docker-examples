@@ -7,6 +7,7 @@ services:
       CERT__DOMAIN: "homelab.net"
       CERT__FILENAME: "homelab"
       CERT__IP: "192.168.0.5"
+      # CERT__IP_RANGE: "192.168.0.5-8"
     image: theonewhoknocks/gencerts
     network_mode: none
     user: "$UID:$GID"
