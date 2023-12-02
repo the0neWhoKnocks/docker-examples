@@ -1,8 +1,6 @@
 services:
   app:
-    build:
-      context: ./
-    # # using double dollars `$$` to escape docker compose' substitution
+    # using double dollars `$$` to escape docker compose' substitution
     command: /bin/zsh -c 'rm -f "$${PATH__DATA}/ids.log" && echo "$$(id -u node):$$(id -g node)" > "$${PATH__DATA}/ids.log" && chmod 777 "$${PATH__DATA}/ids.log"'
     # command: tail -F /dev/null
     environment:

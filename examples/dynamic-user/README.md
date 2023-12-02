@@ -6,7 +6,7 @@ There may be cases where you want to ship a specific environment for a Container
 
 ## Run
 
-Create required directories/files
+Locally, create required directories/files
 ```sh
 mkdir -p ./{data,shell-stuff} && chmod 777 ./{data,shell-stuff}
 touch ./shell-stuff/.zsh_history && chmod 777 ./shell-stuff/.zsh_history
