@@ -1,0 +1,7 @@
+# folders
+.app_data
+.ignore
+dist/public
+dist/utils
+dist/constants.js
+node_modules
