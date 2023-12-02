@@ -1,0 +1,17 @@
+{
+  "name": "app-dev-env",
+  "version": "1.0.0",
+  "description": "An example NodeJS App.",
+  "main": "dist/index.js",
+  "scripts": {
+    "preinstall": "if [ -z \"$IN_CONTAINER\" ] || ! $IN_CONTAINER; then echo \" [ERROR] Not in Docker\\n\"; rm -rf node_modules; exit 1; fi",
+    "comment": "NOTE: Using `--no-warnings` since `--watch` is experimental for now.",
+    "start:dev": "node --inspect=0.0.0.0 --no-warnings --watch ./dist/server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.18.2"
+  }
+}
