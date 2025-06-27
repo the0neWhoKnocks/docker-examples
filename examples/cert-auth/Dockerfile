@@ -1,6 +1,6 @@
 FROM alpine:3.18.4
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache bash openssl
 
 RUN mkdir -p /opt/rootca/output
 WORKDIR /opt/rootca
@@ -20,7 +20,7 @@ ENV CERT__IP_RANGE=""
 RUN touch ./gen.sh; chmod +x ./gen.sh
 # NOTE: Escape env. variables that aren't used at build-time. 
 RUN cat <<EOF > ./gen.sh
-#!/bin/sh
+#!/bin/bash
 
 echo ""
 echo "Using:"
@@ -32,16 +32,32 @@ if [ "\$CERT__IP" != "" ]; then
 elif [ "\$CERT__IP_RANGE" != "" ]; then
   echo "  CERT__IP_RANGE : '\${CERT__IP_RANGE}'"
   
-  ipPrefix=\${CERT__IP_RANGE%.*} 
-  range=\${CERT__IP_RANGE##*.}
-  num1="\$(echo "\$range" | cut -d'-' -f1)"
-  num2="\$(echo "\$range" | cut -d'-' -f2)"
-  
-  # echo "\${ipPrefix} | \${num1} | \${num2}"
-  
-  IP_EXT=""
-  for i in \$(seq \$num1 \$num2); do
-    IP_EXT="\${IP_EXT},IP:\${ipPrefix}.\${i}"
+  ips=(\${CERT__IP_RANGE//,/ })
+
+  function parseRange {
+    local start="\$(echo "\$1" | cut -d'-' -f1)"
+    local end="\$(echo "\$1" | cut -d'-' -f2)"
+    local arr=()
+    
+    for i in \$(seq \$start \$end); do
+      arr+=("\$i")
+    done
+    
+    echo "\${arr[@]}"
+  }
+
+  for ip in "\${ips[@]}"; do
+    parts=(\${ip//./ })
+    
+    for p1 in \$(parseRange "\${parts[0]}"); do
+      for p2 in \$(parseRange "\${parts[1]}"); do
+        for p3 in \$(parseRange "\${parts[2]}"); do
+          for p4 in \$(parseRange "\${parts[3]}"); do
+            IP_EXT="\${IP_EXT},IP:\${p1}.\${p2}.\${p3}.\${p4}"
+          done
+        done
+      done
+    done
   done
 fi
 echo ""

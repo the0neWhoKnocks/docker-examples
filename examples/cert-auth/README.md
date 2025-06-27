@@ -23,7 +23,7 @@ docker compose build gencerts
 ### Use the env vars from the image
 
 ```sh
-UID=$UID GID=$GID docker compose run --rm gencerts`
+UID=$UID GID=$GID docker compose run --rm gencerts
 ```
 
 ### Provide values via environment variables
@@ -54,8 +54,8 @@ docker run --rm -it \
 #
 # So the cert covers the root domain, wild-card sub-domains, and the host IP.
 
-# Note: You can replace CERT__IP with `-e CERT__IP_RANGE="192.168.0.5-8"` to get:
-#   DNS:homelab.net, DNS:*.homelab.net, IP Address:192.168.0.5, IP Address:192.168.0.6, IP Address:192.168.0.7, IP Address:192.168.0.8
+# Note: You can replace CERT__IP with `-e CERT__IP_RANGE="10.3.2.1,192.168.0-1.5-7"` to get:
+#   DNS:homelab.net, DNS:*.homelab.net, IP Address:10.3.2.1, IP Address:192.168.0.5, IP Address:192.168.0.6, IP Address:192.168.0.7, IP Address:192.168.1.5, IP Address:192.168.1.6, IP Address:192.168.1.7
 ```
 
 You could wrap the above in a shell function for reusability:
